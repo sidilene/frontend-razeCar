@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+/* --- CONTAINER PRINCIPAL --- */
+.registro-container {
+  position: relative;
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.registro-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1e3c72;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.registro-container h2 .fa-car {
+  color: #00aaff;
+  font-size: 1.5em;
+}
+
+/* --- INPUTS --- */
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-group .icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #007acc;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 15px 15px 50px;
+  border: 2px solid #ddeeff;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: #f7fbff;
+  color: #1e3c72;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #00aaff;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.2);
+}
+
+/* --- BOTÃO --- */
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #00aaff, #005f99);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 122, 204, 0.4);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 122, 204, 0.6);
+}
+
+/* --- LINKS --- */
+.extra-links {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.extra-links a {
+  color: #007acc;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+}
+
+/* --- BOLHAS --- */
+.bubbles {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  border-radius: 50%;
+  background: rgba(0, 170, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  animation: rise 10s infinite ease-in;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(10px) scale(1.2);
+  }
+  100% {
+    transform: translateY(-100vh) scale(0.5);
+    opacity: 0;
+  }
+}

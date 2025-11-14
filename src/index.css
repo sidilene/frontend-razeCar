@@ -1,0 +1,17 @@
+/* Importa a fonte UMA VEZ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* Reset BÁSICO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Estilo de fonte padrão */
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+  /* NÃO COLOQUE BACKGROUND AQUI */
+}

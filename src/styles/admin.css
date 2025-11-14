@@ -1,0 +1,78 @@
+/* Fonte e fundo */
+body, html {
+  font-family: 'Inter', sans-serif;
+  background-color: #f3f4f6; /* equivalente ao bg-gray-100 */
+  margin: 0;
+  padding: 0;
+  color: #1f2937; /* text-gray-800 */
+  min-height: 100vh;
+}
+
+/* Container centralizado */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem; /* px-4 py-6 */
+}
+
+/* Navbar */
+.navbar {
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* Navbar conteúdo */
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+/* Título */
+.navbar-title {
+  font-weight: 700; /* font-bold */
+  font-size: 1.5rem; /* text-2xl */
+}
+
+/* Aba ativa */
+.tab-active {
+  border-bottom: 3px solid #3b82f6; /* azul */
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Tabs nav */
+.tabs-nav {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb; /* border-gray-200 */
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.tabs-nav button {
+  padding: 0.75rem 1.5rem; /* px-6 py-3 */
+  flex-shrink: 0;
+  font-size: 0.875rem; /* text-sm */
+  color: #4b5563; /* text-gray-600 */
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.tabs-nav button:hover {
+  color: #1f2937; /* hover:text-gray-800 */
+}
+
+/* Esconder scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE e Edge */
+  scrollbar-width: none;  /* Firefox */
+}
