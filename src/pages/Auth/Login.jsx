@@ -76,7 +76,7 @@ export default function Login() {
         localStorage.setItem('user_info', JSON.stringify(dados.user));
         // ✅ Login bem-sucedido
         const funcaoNum = Number(dados.user.funcao);
-        alert(`✅ Bem-vindo(a), ${dados.user.nome}!`);
+
 
         if (funcaoNum === 0) navigate("/home");
         else if (funcaoNum === 1) navigate("/admin");
