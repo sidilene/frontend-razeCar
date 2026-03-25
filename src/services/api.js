@@ -7,7 +7,7 @@ const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname
 // Lógica "Camaleão" 2.0:
 export const API_BASE = isLocal
   ? `http://${hostname}:3333` // Se for local/celular, continua como antes
-  : 'https://backend-razecar.onrender.com';
+  : 'https://api.razecar.com.br';
 
 
 
