@@ -326,9 +326,22 @@ export default function AdminDashboard() {
   };
 
   const handleDayChange = (index, field, value) => {
-    const newAvailability = [...config.availability];
-    newAvailability[index] = { ...newAvailability[index], [field]: value };
-    setConfig({ ...config, availability: newAvailability });
+    setConfig(prevConfig => {
+      // 1. Criamos uma cópia PROFUNDA do array de availability usando map
+      // Isso evita problemas de mutação direta do estado anterior.
+      const newAvailability = prevConfig.availability.map((item, i) => {
+        if (i === index) {
+          return { ...item, [field]: value }; // Atualiza só o dia clicado
+        }
+        return item; // Mantém os outros dias intactos
+      });
+
+      // 2. Retorna o novo estado completo do config
+      return {
+        ...prevConfig,
+        availability: newAvailability
+      };
+    });
   };
 
   // --- CRUD SERVIÇOS ---
