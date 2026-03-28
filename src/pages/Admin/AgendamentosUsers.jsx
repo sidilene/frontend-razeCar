@@ -91,8 +91,8 @@ export default function ClientBooking() {
       const dayIndex = dateObj.getDay();
 
       const diasSemana = [
-        "Domingo", "Segunda", "Terça", "Quarta",
-        "Quinta", "Sexta", "Sábado"
+        "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
+        "Quinta-feira", "Sexta-feira", "Sábado"
       ];
 
       const selectedDayName = diasSemana[dayIndex];
