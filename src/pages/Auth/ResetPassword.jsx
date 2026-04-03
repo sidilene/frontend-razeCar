@@ -19,8 +19,12 @@ export default function ResetPassword() {
   // 👇 ESTADO NOVO: Detecta se é celular
   const [isMobile, setIsMobile] = useState(false);
 
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+
   // O link do Expo com seu IP atual
-  const deepLinkApp = `exp://192.168.1.68:8081/--/definir-senha?token=${token}`;
+  const deepLinkApp = isLocalhost
+  ? `exp://192.168.1.68:8081/--/definir-senha?token=${token}`
+  : `lavajato://definir-senha?token=${token}`;
 
   // --- NOVOS ESTADOS: SEGURANÇA E VISIBILIDADE ---
   const [mostrarSenha, setMostrarSenha] = useState(false);
