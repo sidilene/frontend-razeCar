@@ -19,7 +19,12 @@ export default function ResetPassword() {
   // 👇 ESTADO NOVO: Detecta se é celular
   const [isMobile, setIsMobile] = useState(false);
 
-  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  const hostname = window.location.hostname;
+
+  // Verifica se é localhost, 127.0.0.1 OU um IP da sua rede local (começando com 192.168.)
+  const isLocalhost = hostname === "localhost" ||
+                      hostname === "127.0.0.1" ||
+                      hostname.startsWith("192.168.");
 
   // O link do Expo com seu IP atual
   const deepLinkApp = isLocalhost
