@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 
-export default function ClientBooking() {
+export default function AgendamentosUsers() {
   const { slug } = useParams();
 
   // --- ESTADOS ---
@@ -95,8 +95,18 @@ export default function ClientBooking() {
         "Quinta-feira", "Sexta-feira", "Sábado"
       ];
 
+      const normalizarDia = (str) =>
+        (str || "")
+          .toString()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim();
+
       const selectedDayName = diasSemana[dayIndex];
-      const rule = storeData.horarios.find(h => h.day === selectedDayName);
+      const rule = storeData.horarios.find(
+        h => normalizarDia(h.day) === normalizarDia(selectedDayName)
+      );
 
       if (rule && rule.active) {
         const slots = [];
