@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 
-export default function ClientBooking() {
+export default function AgendamentosUsers() {
   const { slug } = useParams();
 
   // --- ESTADOS ---
@@ -90,13 +90,34 @@ export default function ClientBooking() {
       const dateObj = new Date(year, month - 1, day);
       const dayIndex = dateObj.getDay();
 
-      const diasSemana = [
-        "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
-        "Quinta-feira", "Sexta-feira", "Sábado"
-      ];
+      // Mapa com TODAS as variações conhecidas de nome de dia -> índice (0=Domingo ... 6=Sábado)
+      // Cobre: nomes completos, abreviados, com/sem acento, com/sem "-feira", vindos do site ou do app
+      const MAPA_DIAS = {
+        domingo: 0, dom: 0,
+        segunda: 1, 'segunda-feira': 1, seg: 1,
+        terca: 2, 'terca-feira': 2, ter: 2,
+        quarta: 3, 'quarta-feira': 3, qua: 3,
+        quinta: 4, 'quinta-feira': 4, qui: 4,
+        sexta: 5, 'sexta-feira': 5, sex: 5,
+        sabado: 6, sab: 6,
+      };
 
-      const selectedDayName = diasSemana[dayIndex];
-      const rule = storeData.horarios.find(h => h.day === selectedDayName);
+      const normalizarDia = (str) =>
+        (str || "")
+          .toString()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .trim();
+
+        // Converte qualquer formato de string pro índice numérico do dia (0-6)
+        const obterIndiceDia = (str) => {
+        const chave = normalizarDia(str);
+        return chave in MAPA_DIAS ? MAPA_DIAS[chave] : -1; // -1 = formato não reconhecido
+      };
+
+      // Agora comparamos por índice, não por string
+      const rule = storeData.horarios.find(h => obterIndiceDia(h.day) === dayIndex);
 
       if (rule && rule.active) {
         const slots = [];
