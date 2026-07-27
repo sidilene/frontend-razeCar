@@ -36,7 +36,7 @@ export default function PlanosWeb() {
   const DADOS_PLANOS = {
     basico: {
       nome: "Iniciante",
-      precoMensal: "49,90",
+      precoMensal: "49,99",
       precoAnual: "499,00",
       recursos: ["1 Usuário administrador", "3 Funcionários", "Acompanhamento", "Agendamento", "Auto-Agendamento", "Cadastro de Serviços", "Histórico de Clientes", "Até 80 Lavagens por mês", "Relatórios"],
       destaque: false
