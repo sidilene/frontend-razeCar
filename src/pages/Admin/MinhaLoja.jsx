@@ -168,6 +168,10 @@ export default function AdminDashboard() {
         desc: item.descricao || ""
       }));
 
+      // Mais recente primeiro: o _id do Mongo já é cronológico,
+      // então ordenar por ele (desc) equivale a ordenar por data de criação
+      mappedServices.sort((a, b) => (a.id < b.id ? 1 : a.id > b.id ? -1 : 0));
+
       setServices(mappedServices);
     } catch (error) {
       console.error("Erro ao carregar serviços:", error);
