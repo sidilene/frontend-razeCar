@@ -36,22 +36,22 @@ export default function PlanosWeb() {
   const DADOS_PLANOS = {
     basico: {
       nome: "Iniciante",
-      precoMensal: "89,90",
-      precoAnual: "899,00",
+      precoMensal: "49,90",
+      precoAnual: "499,00",
       recursos: ["1 Usuário administrador", "3 Funcionários", "Acompanhamento", "Agendamento", "Auto-Agendamento", "Cadastro de Serviços", "Histórico de Clientes", "Até 80 Lavagens por mês", "Relatórios"],
       destaque: false
     },
     pro: {
       nome: "Profissional",
-      precoMensal: "110,00",
-      precoAnual: "1100,00",
+      precoMensal: "89,00",
+      precoAnual: "899,00",
       recursos: ["2 Usuários admins", "10 Funcionários", "Lavagens ilimitadas", "Acompanhamento", "Agendamento", "Auto-Agendamento", "Cadastro de Serviços", "Histórico de Clientes", "Relatórios", "Recibo"],
       destaque: true
     },
     enterprise: {
       nome: "Rede",
-      precoMensal: "179,00",
-      precoAnual: "1790,00",
+      precoMensal: "110,00",
+      precoAnual: "1100,00",
       recursos: ["3 Usuários administradores", "Até 15 Funcionários", "Lavagens ilimitadas", "Acompanhamento", "Agendamento", "Auto-Agendamento", "Cadastro de Serviços", "Histórico Completo", "Relatórios", "Recibo"],
       destaque: false
     }
