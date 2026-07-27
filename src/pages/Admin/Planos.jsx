@@ -43,7 +43,7 @@ export default function PlanosWeb() {
     },
     pro: {
       nome: "Profissional",
-      precoMensal: "89,00",
+      precoMensal: "89,99",
       precoAnual: "899,00",
       recursos: ["2 Usuários admins", "10 Funcionários", "Lavagens ilimitadas", "Acompanhamento", "Agendamento", "Auto-Agendamento", "Cadastro de Serviços", "Histórico de Clientes", "Relatórios", "Recibo"],
       destaque: true
