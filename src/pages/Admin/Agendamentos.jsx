@@ -27,8 +27,10 @@ import {
   DollarSign,
    // Ícone para o funcionário
 } from "lucide-react";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 export default function Agendamentos() {
+  const { showFeedback } = useFeedback();
   // Estados Gerais
   const [agendamentos, setAgendamentos] = useState([]);
   const [servicos, setServicos] = useState([]);
@@ -171,7 +173,7 @@ export default function Agendamentos() {
           // observacao: `${prev.observacao || ''} [Cor: ${veiculoFinal.cor}]`
         }));
       } else {
-        alert("Veículo não encontrado na base.");
+        showFeedback("Veículo não encontrado na base.", "aviso");
       }
 
     } catch (error) {
@@ -288,7 +290,7 @@ export default function Agendamentos() {
     e.preventDefault();
 
     if (!formData.cliente || !formData.data || !formData.horario || !formData.servico_id) {
-      alert("Preencha todos os campos obrigatórios.");
+      showFeedback("Preencha todos os campos obrigatórios.", "aviso");
       return;
     }
 
@@ -384,7 +386,7 @@ export default function Agendamentos() {
     } catch (error) {
       console.error("Erro no handleSave:", error);
       // Aqui só chegam erros de conexão ou validação genérica
-      alert(`Erro: ${error.message}`);
+      showFeedback(`Erro: ${error.message}`);
     }
   }
 
@@ -413,7 +415,7 @@ export default function Agendamentos() {
 
     } catch (error) {
       console.error("Erro ao deletar:", error);
-      alert("Erro ao excluir agendamento."); // Fallback caso dê erro
+      showFeedback("Erro ao excluir agendamento."); // Fallback caso dê erro
     }
   }
 

@@ -70,8 +70,7 @@ export default function ResetPassword() {
   // Se não tiver token na URL
   useEffect(() => {
     if (!token) {
-      alert("Link inválido ou incompleto.");
-      navigate("/");
+      mostrarAviso("Link inválido ou incompleto.", "erro", () => navigate("/"));
     }
   }, [token, navigate]);
 

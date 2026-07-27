@@ -7,9 +7,11 @@ import { useNavigate } from 'react-router-dom';
 
 // URL do seu Backend
 import { API_BASE } from "../../services/api";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 export default function PlanosWeb() {
   const navigate = useNavigate();
+  const { showFeedback } = useFeedback();
   const isDark = true; // Ajuste conforme seu contexto de tema
 
   const [loading, setLoading] = useState(true);
@@ -115,8 +117,9 @@ export default function PlanosWeb() {
         const errorData = await response.json().catch(() => ({}));
 
         if (response.status === 401) {
-             alert("Sessão expirada. Faça login novamente.");
-             window.location.href = '/login';
+             showFeedback("Sessão expirada. Faça login novamente.", "aviso", null, () => {
+               window.location.href = '/login';
+             });
              return;
         }
 
@@ -131,12 +134,12 @@ export default function PlanosWeb() {
       if (sucesso && invoiceUrl) {
         window.location.href = invoiceUrl;
       } else {
-        alert("O sistema criou a assinatura, mas não retornou o link.");
+        showFeedback("O sistema criou a assinatura, mas não retornou o link.");
       }
 
     } catch (error) {
       console.error("💥 Erro:", error);
-      alert(error.message || "Erro de conexão.");
+      showFeedback(error.message || "Erro de conexão.");
     } finally {
       setLoadingPagamento(null);
     }

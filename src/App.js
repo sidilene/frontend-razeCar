@@ -21,8 +21,12 @@ import Planos from "./pages/Admin/Planos";
 import RotaPrivada from "./components/RotaPrivada";
 import { BloqueioAssinatura } from "./components/BloqueioAssinatura";
 
+// Feedback global (substitui os alert() nativos por um modal bonito)
+import { FeedbackProvider } from "./contexts/FeedbackContext";
+
 export default function App() {
   return (
+    <FeedbackProvider>
     <Router>
       {/* O Bloqueio fica DENTRO do Router para poder usar navigate()
          e verificar a URL atual
@@ -66,5 +70,6 @@ export default function App() {
 
       </Routes>
     </Router>
+    </FeedbackProvider>
   );
 }

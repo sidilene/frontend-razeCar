@@ -30,6 +30,7 @@ import {
 
   Printer
 } from "lucide-react";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 /**
  * GestaoLavagens.jsx
@@ -45,6 +46,7 @@ const modernInputClass = "w-full p-3 bg-gray-50 border border-gray-200 rounded-x
 const modernLabelClass = "block text-xs font-bold text-gray-500 uppercase mb-1 ml-1";
 
 export default function GestaoLavagens() {
+  const { showFeedback } = useFeedback();
   // dados principais
   const [lavagens, setLavagens] = useState([]); // Lista acumulada
   const [pagina, setPagina] = useState(1);
@@ -230,11 +232,11 @@ export default function GestaoLavagens() {
       // 3. Sucesso: Atualiza a interface
       setLavagens((prev) => prev.filter((item) => !selectedIds.includes(item._id)));
       setSelectedIds([]); // Limpa a seleção
-      alert("Itens excluídos com sucesso!");
+      showFeedback("Itens excluídos com sucesso!", "sucesso");
 
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      alert("Erro ao excluir itens. Tente novamente.");
+      showFeedback("Erro ao excluir itens. Tente novamente.");
     } finally {
       setIsDeletingBatch(false);
     }
@@ -247,7 +249,7 @@ export default function GestaoLavagens() {
 
     // 2. Validação simples
     if (!placaLimpa || placaLimpa.length < 7) {
-      alert("Digite a placa completa para buscar.");
+      showFeedback("Digite a placa completa para buscar.", "aviso");
       return;
     }
 
@@ -269,11 +271,11 @@ export default function GestaoLavagens() {
         setMostrarManual(true); // <--- AQUI: Se der erro, mostramos os inputs manuais
 
         if (response.status === 401) {
-             alert("Sessão expirada. Faça login novamente.");
+             showFeedback("Sessão expirada. Faça login novamente.", "aviso");
         } else {
              // Tenta ler msg de erro do backend, se não tiver usa msg padrão
              const errData = await response.json().catch(() => ({}));
-             alert(errData.erro || "Veículo não encontrado. Preencha manualmente.");
+             showFeedback(errData.erro || "Veículo não encontrado. Preencha manualmente.", "aviso");
         }
         return;
       }
@@ -302,14 +304,14 @@ export default function GestaoLavagens() {
       } else {
         // A requisição funcionou, mas o objeto veio vazio
         setMostrarManual(true); // Abre inputs manuais
-        alert("Veículo não encontrado na base. Preencha manualmente.");
+        showFeedback("Veículo não encontrado na base. Preencha manualmente.", "aviso");
       }
 
     } catch (error) {
       // --- CENÁRIO DE ERRO DE CONEXÃO (Internet caiu, servidor off) ---
       console.error("Erro requisição:", error);
       setMostrarManual(true); // <--- AQUI: Garante que os inputs apareçam
-      alert("Erro de conexão. Por favor, preencha os dados manualmente.");
+      showFeedback("Erro de conexão. Por favor, preencha os dados manualmente.");
     } finally {
       setIsLoadingPlaca(false);
     }
@@ -492,7 +494,7 @@ export default function GestaoLavagens() {
     try {
       // ... (suas validações iniciais permanecem iguais)
       if (!novaLavagem.tipoLavagem || !novaLavagem.placa) {
-        alert("Preencha os campos obrigatórios (Placa, Nome, Serviço).");
+        showFeedback("Preencha os campos obrigatórios (Placa, Nome, Serviço).", "aviso");
         return;
       }
 
@@ -595,7 +597,7 @@ export default function GestaoLavagens() {
       console.error(err);
       // Aqui só exibe alertas de erros "comuns" (conexão, validação, etc)
       // O erro de plano já foi tratado acima e não chega aqui.
-      alert("Erro: " + (err.message || err));
+      showFeedback("Erro: " + (err.message || err));
     }
 }
 
@@ -690,7 +692,7 @@ const verificarPlanoUsuario = async () => {
 
     } catch (error) {
       console.error("Erro ao tentar gerar/baixar o PDF:", error);
-      alert("Erro ao conectar com o servidor para gerar o PDF.");
+      showFeedback("Erro ao conectar com o servidor para gerar o PDF.");
     }
   };
 
@@ -700,7 +702,7 @@ const verificarPlanoUsuario = async () => {
     const lav = lavagens.find((l) => String(l._id) === String(id));
 
     if (!lav) {
-      return alert("Lavagem não encontrada no histórico carregado.");
+      return showFeedback("Lavagem não encontrada no histórico carregado.", "aviso");
     }
 
     // 2. Mantemos sua lógica de extração de dados
@@ -775,7 +777,7 @@ const verificarPlanoUsuario = async () => {
 
     } catch (err) {
       console.error(err);
-      alert("Erro ao salvar: " + (err.message || err));
+      showFeedback("Erro ao salvar: " + (err.message || err));
     }
   }
 
@@ -814,7 +816,7 @@ const verificarPlanoUsuario = async () => {
 
       } catch (err) {
         console.error("Erro ao deletar lavagem:", err);
-        alert("Erro: " + (err.message || err));
+        showFeedback("Erro: " + (err.message || err));
       }
     }
 

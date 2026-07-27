@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { API_BASE } from "../../services/api";
 // 1. Adicionado CheckCircle, Key, Mail nas importações
 import { Users, Plus, Pencil, Trash2, Save, X, AlertTriangle, Loader2, CheckCircle, Key, Mail ,  Crown } from 'lucide-react';
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 // Map de funções
 const roleNameMap = {
@@ -34,6 +35,7 @@ const ModernInput = ({ label, name, type = "text", defaultValue, value, onChange
 );
 
 export default function Usuarios() {
+  const { showFeedback } = useFeedback();
   const [users, setUsers] = useState([]);
   const [funcionarioParaEditar, setFuncionarioParaEditar] = useState(null);
   const [funcionarioParaDeletar, setFuncionarioParaDeletar] = useState(null);
@@ -81,7 +83,7 @@ export default function Usuarios() {
       const data = await response.json();
       setFuncionarioParaEditar(data.funcionario);
     } catch (error) {
-      alert('Erro ao carregar funcionário: ' + error.message);
+      showFeedback('Erro ao carregar funcionário: ' + error.message);
       console.error(error);
     }
   };
@@ -89,7 +91,7 @@ export default function Usuarios() {
 
   // Exclusão logic
   const confirmarExclusaoFuncionario = (user) => {
-    if (user.tipo === "dono") return alert("Não é possível excluir o dono do lavajato.");
+    if (user.tipo === "dono") return showFeedback("Não é possível excluir o dono do lavajato.", "aviso");
     setFuncionarioParaDeletar(user);
   };
 
@@ -108,10 +110,10 @@ export default function Usuarios() {
         await loadUsersFromApi();
       } else {
         const erro = await response.json();
-        alert("Erro ao excluir: " + (erro.error || "Erro desconhecido"));
+        showFeedback("Erro ao excluir: " + (erro.error || "Erro desconhecido"));
       }
     } catch (err) {
-      alert("Erro na requisição: " + err.message);
+      showFeedback("Erro na requisição: " + err.message);
     } finally {
       setIsLoading(false);
     }
@@ -144,10 +146,10 @@ export default function Usuarios() {
         await loadUsersFromApi();
       } else {
         const erro = await response.json();
-        alert('Erro ao atualizar funcionário: ' + (erro.error || JSON.stringify(erro)));
+        showFeedback('Erro ao atualizar funcionário: ' + (erro.error || JSON.stringify(erro)));
       }
     } catch (error) {
-      alert('Erro na requisição: ' + error.message);
+      showFeedback('Erro na requisição: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -162,18 +164,18 @@ export default function Usuarios() {
     const emailValor = email.value.trim();
 
     if (!addNome || !funcao.value) {
-      return alert("Preencha o nome e a função.");
+      return showFeedback("Preencha o nome e a função.", "aviso");
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (funcao.value === "1") {
-      if (!emailValor) return alert("O campo E-mail é OBRIGATÓRIO para administradores.");
-      if (!emailRegex.test(emailValor)) return alert("E-mail inválido!");
+      if (!emailValor) return showFeedback("O campo E-mail é OBRIGATÓRIO para administradores.", "aviso");
+      if (!emailRegex.test(emailValor)) return showFeedback("E-mail inválido!", "aviso");
     }
 
     if (funcao.value === "0" && emailValor.length > 0) {
-      if (!emailRegex.test(emailValor)) return alert("O e-mail informado parece inválido.");
+      if (!emailRegex.test(emailValor)) return showFeedback("O e-mail informado parece inválido.", "aviso");
     }
 
     setIsLoading(true);
@@ -232,7 +234,7 @@ export default function Usuarios() {
 
     } catch (error) {
       console.error(error);
-      alert("Erro ao adicionar usuário: " + (error.message || error));
+      showFeedback("Erro ao adicionar usuário: " + (error.message || error));
     } finally {
       setIsLoading(false);
     }

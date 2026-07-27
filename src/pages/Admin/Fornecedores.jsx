@@ -5,6 +5,7 @@ import {
   AlertTriangle, Loader2, CheckCircle,
   Phone, Mail
 } from 'lucide-react';
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 // --- FUNÇÕES AUXILIARES DE MÁSCARA ---
 
@@ -55,6 +56,7 @@ const ModernInput = ({ label, name, type = "text", value, onChange, placeholder,
 );
 
 export default function Fornecedores() {
+  const { showFeedback } = useFeedback();
   const [fornecedores, setFornecedores] = useState([]);
   const [fornecedorParaEditar, setFornecedorParaEditar] = useState(null);
   const [fornecedorParaDeletar, setFornecedorParaDeletar] = useState(null);
@@ -106,10 +108,10 @@ export default function Fornecedores() {
         setFornecedorParaDeletar(null);
         await loadFornecedores();
       } else {
-        alert("Erro ao excluir fornecedor.");
+        showFeedback("Erro ao excluir fornecedor.");
       }
     } catch (err) {
-      alert("Erro na requisição: " + err.message);
+      showFeedback("Erro na requisição: " + err.message);
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +122,7 @@ export default function Fornecedores() {
     e.preventDefault();
     if (isLoading) return;
 
-    if (!addNome || !addTelefone) return alert("Nome e Telefone são obrigatórios.");
+    if (!addNome || !addTelefone) return showFeedback("Nome e Telefone são obrigatórios.", "aviso");
 
     setIsLoading(true);
 
@@ -164,7 +166,7 @@ export default function Fornecedores() {
       await loadFornecedores();
 
     } catch (error) {
-      alert("Erro: " + error.message);
+      showFeedback("Erro: " + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -188,10 +190,10 @@ export default function Fornecedores() {
         setFornecedorParaEditar(null);
         await loadFornecedores();
       } else {
-        alert('Erro ao atualizar fornecedor.');
+        showFeedback('Erro ao atualizar fornecedor.');
       }
     } catch (error) {
-      alert('Erro na requisição: ' + error.message);
+      showFeedback('Erro na requisição: ' + error.message);
     } finally {
       setIsLoading(false);
     }
