@@ -158,6 +158,13 @@ export default function AgendamentosUsers() {
   const submitBooking = async () => {
     setSubmitting(true);
     try {
+      // Converte pra um Date real ANTES de enviar, usando o fuso horário
+      // do navegador de quem está agendando (mesmo padrão usado no app
+      // administrativo). Mandar a string crua sem timezone faz o servidor
+      // (que roda em UTC) interpretar o horário digitado como se já fosse
+      // UTC, deslocando a hora exibida depois.
+      const dataHoraCombinada = new Date(`${bookingData.date}T${bookingData.time}:00`);
+
       const payload = {
         lavajatoId: storeData._id,
         nome: bookingData.clientName,
@@ -165,7 +172,7 @@ export default function AgendamentosUsers() {
         placa: bookingData.vehiclePlate,
         veiculo: bookingData.vehicleModel,
         tipoLavagem: bookingData.serviceId,
-        dataHora: `${bookingData.date}T${bookingData.time}:00`,
+        dataHora: dataHoraCombinada.toISOString(),
         observacao: "Agendado via link público"
       };
 
