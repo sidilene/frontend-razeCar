@@ -18,6 +18,10 @@ export default function PlanosWeb() {
   const [loadingPagamento, setLoadingPagamento] = useState(null);
   const [modoCobranca, setModoCobranca] = useState(false);
   const [planoDoUsuario, setPlanoDoUsuario] = useState(null);
+  // Plano que o usuário JÁ TEM ativo (assinatura em dia). Usado só pra
+  // desabilitar o botão de pagamento desse plano na listagem, evitando
+  // que ele tente pagar de novo por algo que já está ativo.
+  const [planoAtivo, setPlanoAtivo] = useState(null);
 
   // NOVO ESTADO: Controle Mensal / Anual (Começa no mensal)
   const [isAnual, setIsAnual] = useState(false);
@@ -92,14 +96,18 @@ export default function PlanosWeb() {
       if (!response.ok) throw new Error('Erro ao buscar usuário');
 
       const usuario = await response.json();
+      // trim() por segurança: já vimos status vir com espaço sobrando no banco
+      const status = (usuario.assinatura?.status || '').trim();
 
-      if (usuario.assinatura && usuario.assinatura.status === 'vencido') {
+      if (status === 'vencido') {
          setPlanoDoUsuario(usuario.plano || 'pro');
          setModoCobranca(true);
+         setPlanoAtivo(null);
       } else {
          // Assinatura regularizada (ex: pagamento acabou de ser confirmado) ou
          // nunca esteve vencida: sai da tela de "Renovação" automaticamente.
          setModoCobranca(false);
+         setPlanoAtivo(status === 'ativo' ? usuario.plano : null);
       }
 
     } catch (e) {
@@ -171,14 +179,19 @@ export default function PlanosWeb() {
   const CardPlano = ({ planoKey, plano }) => {
     const isPro = plano.destaque;
     const isSelected = loadingPagamento === planoKey;
+    const ehPlanoAtual = planoAtivo === planoKey;
 
     // Pega o preço baseado no toggle atual
     const precoAtual = isAnual ? plano.precoAnual : plano.precoMensal;
     const textoPeriodo = isAnual ? "por ano" : "por mês";
 
     return (
-      <div className={`relative rounded-xl p-6 transition-all duration-300 shadow-lg flex flex-col h-full ${themeClasses.surface} ${isPro ? "border-2 border-blue-600 transform hover:-translate-y-1 scale-100 md:scale-105 z-10" : `border ${themeClasses.border} hover:border-blue-400`}`}>
-        {isPro && (
+      <div className={`relative rounded-xl p-6 transition-all duration-300 shadow-lg flex flex-col h-full ${themeClasses.surface} ${ehPlanoAtual ? "border-2 border-green-600" : isPro ? "border-2 border-blue-600 transform hover:-translate-y-1 scale-100 md:scale-105 z-10" : `border ${themeClasses.border} hover:border-blue-400`}`}>
+        {ehPlanoAtual ? (
+          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+            SEU PLANO ATUAL
+          </div>
+        ) : isPro && (
           <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
             RECOMENDADO
           </div>
@@ -206,37 +219,46 @@ export default function PlanosWeb() {
 
         {/* --- BOTÕES DE PAGAMENTO --- */}
         <div className="mt-auto flex flex-col gap-3">
-          <button
-            onClick={() => handleCheckout(planoKey, 'PIX')}
-            disabled={isSelected}
-            className={`w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-transform hover:scale-105
-              bg-emerald-600 hover:bg-emerald-700 text-white shadow-md
-              ${isSelected ? "opacity-50 cursor-not-allowed" : ""}
-            `}
-          >
-            {isSelected ? <Loader2 className="animate-spin" size={18}/> : (
-              <>
-                <div className="w-4 h-4 rounded-full border border-white flex items-center justify-center text-[8px] font-sans">Px</div>
-                Pagar com PIX
-              </>
-            )}
-          </button>
+          {ehPlanoAtual ? (
+            <div className={`w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 bg-green-600/20 text-green-500 border border-green-600`}>
+              <CheckCircle size={18} />
+              Plano Ativo
+            </div>
+          ) : (
+            <>
+              <button
+                onClick={() => handleCheckout(planoKey, 'PIX')}
+                disabled={isSelected}
+                className={`w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-transform hover:scale-105
+                  bg-emerald-600 hover:bg-emerald-700 text-white shadow-md
+                  ${isSelected ? "opacity-50 cursor-not-allowed" : ""}
+                `}
+              >
+                {isSelected ? <Loader2 className="animate-spin" size={18}/> : (
+                  <>
+                    <div className="w-4 h-4 rounded-full border border-white flex items-center justify-center text-[8px] font-sans">Px</div>
+                    Pagar com PIX
+                  </>
+                )}
+              </button>
 
-          <button
-            onClick={() => handleCheckout(planoKey, 'CREDIT_CARD')}
-            disabled={isSelected}
-            className={`w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-transform hover:scale-105
-              ${isPro ? "bg-blue-600 hover:bg-blue-700 text-white" : `${themeClasses.inputBg} ${themeClasses.text} hover:bg-gray-200 dark:hover:bg-gray-600 border ${themeClasses.border}`}
-              ${isSelected ? "opacity-50 cursor-not-allowed" : ""}
-            `}
-          >
-            {isSelected ? <Loader2 className="animate-spin" size={18}/> : (
-              <>
-                <CreditCard size={18} />
-                Cartão de Crédito
-              </>
-            )}
-          </button>
+              <button
+                onClick={() => handleCheckout(planoKey, 'CREDIT_CARD')}
+                disabled={isSelected}
+                className={`w-full py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-transform hover:scale-105
+                  ${isPro ? "bg-blue-600 hover:bg-blue-700 text-white" : `${themeClasses.inputBg} ${themeClasses.text} hover:bg-gray-200 dark:hover:bg-gray-600 border ${themeClasses.border}`}
+                  ${isSelected ? "opacity-50 cursor-not-allowed" : ""}
+                `}
+              >
+                {isSelected ? <Loader2 className="animate-spin" size={18}/> : (
+                  <>
+                    <CreditCard size={18} />
+                    Cartão de Crédito
+                  </>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </div>
     );
