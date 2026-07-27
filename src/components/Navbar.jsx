@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ThemeToggle from './ThemeToggle';
 import { API_BASE } from "../services/api";
+import { useFeedback } from "../contexts/FeedbackContext";
 
 export default function Navbar() {
+  const { showFeedback } = useFeedback();
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -90,7 +92,7 @@ export default function Navbar() {
     setSaving(true);
 
     if (!formData.id) {
-      alert("Erro: ID não encontrado. Recarregue a página.");
+      showFeedback("Erro: ID não encontrado. Recarregue a página.");
       setSaving(false);
       return;
     }
@@ -119,14 +121,14 @@ export default function Navbar() {
            email: formData.email
         }));
 
-        alert("Dados atualizados com sucesso!");
+        showFeedback("Dados atualizados com sucesso!", "sucesso");
       } else {
         const err = await response.json();
-        alert(`Erro: ${err.error || "Falha ao atualizar"}`);
+        showFeedback(`Erro: ${err.error || "Falha ao atualizar"}`);
       }
     } catch (error) {
       console.error("Erro na atualização:", error);
-      alert("Erro de conexão.");
+      showFeedback("Erro de conexão.");
     } finally {
       setSaving(false);
     }
@@ -166,22 +168,22 @@ export default function Navbar() {
       const contentType = response.headers.get("content-type");
 
       if (response.ok) {
-        alert("Conta excluída com sucesso.");
+        showFeedback("Conta excluída com sucesso.", "sucesso");
         handleLogout(null);
       } else {
         if (contentType && contentType.indexOf("application/json") !== -1) {
           const data = await response.json();
-          alert(data.error || "Erro ao excluir");
+          showFeedback(data.error || "Erro ao excluir");
         } else {
           // Se cair aqui, é porque o servidor mandou um HTML (Erro 404 ou 500 fatal)
           const textError = await response.text();
           console.error("Erro bruto do servidor:", textError);
-          alert(`Erro crítico (${response.status}): Rota não encontrada ou erro no servidor.`);
+          showFeedback(`Erro crítico (${response.status}): Rota não encontrada ou erro no servidor.`);
         }
       }
     } catch (error) {
       console.error("Erro na requisição:", error);
-      alert("Não foi possível conectar ao servidor.");
+      showFeedback("Não foi possível conectar ao servidor.");
     } finally {
       setDeleting(false);
     }

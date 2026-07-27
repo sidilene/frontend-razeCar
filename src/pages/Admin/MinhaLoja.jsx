@@ -24,6 +24,7 @@ import {
   ChevronUp,
   Loader2
 } from "lucide-react";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 // --- CONFIGURAÇÃO DA API ---
 const API_URL = API_BASE; // Ajuste conforme necessário
@@ -31,6 +32,7 @@ const API_URL = API_BASE; // Ajuste conforme necessário
 
 
 export default function AdminDashboard() {
+  const { showFeedback } = useFeedback();
   const [activeTab, setActiveTab] = useState("services");
   const [expandHours, setExpandHours] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -183,7 +185,7 @@ export default function AdminDashboard() {
         const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
 
         if (!validTypes.includes(file.type)) {
-          alert("Formato de arquivo inválido! Por favor, envie apenas imagens (JPG, PNG ou WEBP).");
+          showFeedback("Formato de arquivo inválido! Por favor, envie apenas imagens (JPG, PNG ou WEBP).", "aviso");
           e.target.value = ""; // Limpa o input para permitir nova seleção
           return; // Para a execução aqui
         }
@@ -191,7 +193,7 @@ export default function AdminDashboard() {
         // --- VALIDAÇÃO DE TAMANHO (OPCIONAL - Ex: Máx 5MB) ---
         const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
         if (file.size > maxSizeInBytes) {
-          alert("A imagem é muito grande! O tamanho máximo permitido é 5MB.");
+          showFeedback("A imagem é muito grande! O tamanho máximo permitido é 5MB.", "aviso");
           e.target.value = "";
           return;
         }
@@ -248,7 +250,7 @@ export default function AdminDashboard() {
     // --- SALVAR CONFIGURAÇÃO DA LOJA ---
     const handleSaveConfig = async () => {
       if (!lavajatoId) {
-          alert("Erro: ID da loja não carregado. Recarregue a página.");
+          showFeedback("Erro: ID da loja não carregado. Recarregue a página.");
           return;
       }
 
@@ -318,7 +320,7 @@ export default function AdminDashboard() {
         });
 
       } catch (error) {
-          alert("Erro ao salvar: " + error.message);
+          showFeedback("Erro ao salvar: " + error.message);
           console.error(error);
       } finally {
           setLoading(false);
@@ -386,7 +388,7 @@ export default function AdminDashboard() {
 
   const saveService = async () => {
     if (!currentService.name || !currentService.price) {
-        alert("Por favor, preencha o nome e o preço.");
+        showFeedback("Por favor, preencha o nome e o preço.", "aviso");
         return;
     }
 
@@ -434,7 +436,7 @@ export default function AdminDashboard() {
 
     } catch (error) {
         console.error(error);
-        alert("Erro ao salvar: " + error.message);
+        showFeedback("Erro ao salvar: " + error.message);
     } finally {
         setLoading(false);
     }

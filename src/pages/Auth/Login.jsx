@@ -3,9 +3,11 @@ import { API_BASE } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import razeLogo from "../../assets/logo.png";
 import { Eye, EyeOff } from "lucide-react";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { showFeedback } = useFeedback();
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function Login() {
     const senha = e.target.password.value;
 
     if (!email || !senha) {
-      alert("Por favor, preencha todos os campos.");
+      showFeedback("Por favor, preencha todos os campos.", "aviso");
       return;
     }
 
@@ -80,12 +82,12 @@ export default function Login() {
 
         if (funcaoNum === 0) navigate("/home");
         else if (funcaoNum === 1) navigate("/admin");
-        else alert("Função desconhecida.");
+        else showFeedback("Função desconhecida.");
       } else {
-        alert("Falha no login: " + (dados.error || "Erro desconhecido"));
+        showFeedback("Falha no login: " + (dados.error || "Erro desconhecido"));
       }
     } catch (erro) {
-      alert("Erro ao tentar fazer login: " + erro.message);
+      showFeedback("Erro ao tentar fazer login: " + erro.message);
     }
   };
 

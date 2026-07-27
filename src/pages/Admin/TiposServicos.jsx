@@ -16,6 +16,7 @@ import {
   X,
   AlertTriangle
 } from "lucide-react";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 // Função auxiliar para formatar moeda BR
 function formatarPreco(valor) {
@@ -45,6 +46,7 @@ const ModernInput = ({ label, ...props }) => (
 );
 
 export default function TiposDeServicos() {
+  const { showFeedback } = useFeedback();
   const [tipos, setTipos] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -147,7 +149,7 @@ export default function TiposDeServicos() {
 
     } catch (err) {
       console.error(err);
-      alert("Erro ao criar serviço: " + err.message);
+      showFeedback("Erro ao criar serviço: " + err.message);
     }
   }
 
@@ -197,7 +199,7 @@ export default function TiposDeServicos() {
       setShowEditModal(false);
       await loadTipos();
     } catch (err) {
-      alert("Erro ao atualizar tipo.");
+      showFeedback("Erro ao atualizar tipo.");
     }
   }
 
@@ -217,7 +219,7 @@ export default function TiposDeServicos() {
       setShowDeleteModal(false);
       await loadTipos();
     } catch (err) {
-      alert("Erro ao excluir tipo.");
+      showFeedback("Erro ao excluir tipo.");
     }
   }
 

@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { cpfValidator as cpf, cnpjValidator as cnpj } from '../../utils/validadores';
 import { API_BASE } from "../../services/api";
 import { User, Lock, Mail, Building, MapPin, FileText, CreditCard, Phone , Eye, EyeOff , AlertCircle} from "lucide-react";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 const estadosBrasileiros = [
   { sigla: 'AC', nome: 'Acre' }, { sigla: 'AL', nome: 'Alagoas' }, { sigla: 'AP', nome: 'Amapá' },
@@ -18,6 +19,7 @@ const estadosBrasileiros = [
 ];
 
 export default function Registro() {
+  const { showFeedback } = useFeedback();
   const [nomeLavajato, setNomeLavajato] = useState("");
   const [nomeDono, setNomeDono] = useState("");
   const [email, setEmail] = useState("");
@@ -145,22 +147,22 @@ export default function Registro() {
 
     // 2. Validação LGPD
     if (!aceitouTermos) {
-        return alert("⚠️ Você precisa aceitar os Termos de Uso e Política de Privacidade para continuar.");
+        return showFeedback("Você precisa aceitar os Termos de Uso e Política de Privacidade para continuar.", "aviso");
     }
 
     // 3. Validação E-mail (Regex)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailLimpo)) {
-        return alert("❌ Por favor, insira um e-mail válido (ex: nome@exemplo.com).");
+        return showFeedback("Por favor, insira um e-mail válido (ex: nome@exemplo.com).", "aviso");
     }
 
     // 4. Validação CPF/CNPJ (Algoritmo)
     if (documentoLimpo.length === 11) {
-        if (!cpf.isValid(documentoLimpo)) return alert("❌ O CPF informado é inválido.");
+        if (!cpf.isValid(documentoLimpo)) return showFeedback("O CPF informado é inválido.", "aviso");
     } else if (documentoLimpo.length === 14) {
-        if (!cnpj.isValid(documentoLimpo)) return alert("❌ O CNPJ informado é inválido.");
+        if (!cnpj.isValid(documentoLimpo)) return showFeedback("O CNPJ informado é inválido.", "aviso");
     } else {
-        return alert("❌ O documento deve ter 11 dígitos (CPF) ou 14 dígitos (CNPJ).");
+        return showFeedback("O documento deve ter 11 dígitos (CPF) ou 14 dígitos (CNPJ).", "aviso");
     }
 
     // 5. Outras validações
@@ -223,12 +225,11 @@ export default function Registro() {
             }
         }
 
-      alert("✅ Cadastro realizado com sucesso!");
-      navigate("/");
+      showFeedback("Cadastro realizado com sucesso!", "sucesso", null, () => navigate("/"));
 
     } catch (erro) {
       console.error("❌ Erro ao cadastrar:", erro);
-      alert("Falha ao cadastrar: " + erro.message);
+      showFeedback("Falha ao cadastrar: " + erro.message);
     }
   };
 

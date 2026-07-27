@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
+  const { showFeedback } = useFeedback();
   const [loading, setLoading] = useState(false); // Estado para controlar o botão
 
   // Lógica para a criação das bolhas animadas
@@ -38,7 +40,7 @@ export default function ForgotPassword() {
     const email = e.target.email.value.trim();
 
     if (!email) {
-      alert("Por favor, preencha o campo de e-mail.");
+      showFeedback("Por favor, preencha o campo de e-mail.", "aviso");
       return;
     }
 
@@ -55,13 +57,12 @@ export default function ForgotPassword() {
       const dados = await resposta.json().catch(() => ({}));
 
       if (resposta.ok) {
-        alert("✅ " + (dados.message || "E-mail enviado! Verifique sua caixa de entrada."));
-        navigate("/login");
+        showFeedback(dados.message || "E-mail enviado! Verifique sua caixa de entrada.", "sucesso", null, () => navigate("/login"));
       } else {
-        alert("⚠️ " + (dados.error || "Algo deu errado. Tente novamente."));
+        showFeedback(dados.error || "Algo deu errado. Tente novamente.", "aviso");
       }
     } catch (erro) {
-      alert("Erro de conexão: " + erro.message);
+      showFeedback("Erro de conexão: " + erro.message);
     } finally {
       setLoading(false); // Libera o botão
     }

@@ -6,6 +6,7 @@ import {
   AlertTriangle, Loader2, CheckCircle,
   TrendingDown, AlertOctagon,  Minus, Truck
 } from 'lucide-react';
+import { useFeedback } from "../../contexts/FeedbackContext";
 
 // --- FUNÇÕES AUXILIARES ---
 const formatarMoeda = (valor) => {
@@ -115,6 +116,7 @@ const ModernSelect = ({
 );
 
 export default function Estoque() {
+  const { showFeedback } = useFeedback();
   const [produtos, setProdutos] = useState([]);
   const [fornecedores, setFornecedores] = useState([]); // --- NOVO: Lista de fornecedores
 
@@ -237,10 +239,10 @@ export default function Estoque() {
         await loadEstoqueFromApi();
       } else {
         const erro = await response.json();
-        alert("Erro ao excluir: " + (erro.error || "Erro desconhecido"));
+        showFeedback("Erro ao excluir: " + (erro.error || "Erro desconhecido"));
       }
     } catch (err) {
-      alert("Erro na requisição: " + err.message);
+      showFeedback("Erro na requisição: " + err.message);
     } finally {
       setIsLoading(false);
     }
@@ -250,7 +252,7 @@ export default function Estoque() {
     e.preventDefault();
     if (isLoading) return;
 
-    if (!addNome || !addQtd) return alert("Preencha o nome e a quantidade.");
+    if (!addNome || !addQtd) return showFeedback("Preencha o nome e a quantidade.", "aviso");
 
     setIsLoading(true);
 
@@ -290,7 +292,7 @@ export default function Estoque() {
       await loadEstoqueFromApi();
 
     } catch (error) {
-      alert("Erro ao adicionar produto: " + (error.message || error));
+      showFeedback("Erro ao adicionar produto: " + (error.message || error));
     } finally {
       setIsLoading(false);
     }
@@ -322,10 +324,10 @@ export default function Estoque() {
         await loadEstoqueFromApi();
       } else {
         const erro = await response.json();
-        alert('Erro ao atualizar: ' + (erro.error || JSON.stringify(erro)));
+        showFeedback('Erro ao atualizar: ' + (erro.error || JSON.stringify(erro)));
       }
     } catch (error) {
-      alert('Erro na requisição: ' + error.message);
+      showFeedback('Erro na requisição: ' + error.message);
     } finally {
       setIsLoading(false);
     }
