@@ -59,6 +59,21 @@ export default function PlanosWeb() {
 
   useEffect(() => {
     verificarStatusUsuario();
+
+    // 👇 Quando o usuário volta pra essa aba (ex: fechou a aba do checkout
+    // do Asaas ou apertou "voltar"), reconsulta o status da assinatura
+    // automaticamente, sem precisar dar F5 na mão.
+    const aoFocarAba = () => verificarStatusUsuario();
+    const aoMudarVisibilidade = () => {
+      if (document.visibilityState === 'visible') aoFocarAba();
+    };
+    document.addEventListener('visibilitychange', aoMudarVisibilidade);
+    window.addEventListener('focus', aoFocarAba);
+
+    return () => {
+      document.removeEventListener('visibilitychange', aoMudarVisibilidade);
+      window.removeEventListener('focus', aoFocarAba);
+    };
   }, []);
 
   const verificarStatusUsuario = async () => {
@@ -79,8 +94,12 @@ export default function PlanosWeb() {
       const usuario = await response.json();
 
       if (usuario.assinatura && usuario.assinatura.status === 'vencido') {
-         setPlanoDoUsuario('pro');
+         setPlanoDoUsuario(usuario.plano || 'pro');
          setModoCobranca(true);
+      } else {
+         // Assinatura regularizada (ex: pagamento acabou de ser confirmado) ou
+         // nunca esteve vencida: sai da tela de "Renovação" automaticamente.
+         setModoCobranca(false);
       }
 
     } catch (e) {
@@ -132,7 +151,11 @@ export default function PlanosWeb() {
       const { invoiceUrl, sucesso } = data;
 
       if (sucesso && invoiceUrl) {
-        window.location.href = invoiceUrl;
+        // Abre o checkout do Asaas numa NOVA aba, em vez de navegar a página
+        // inteira pra fora do sistema. Assim o usuário continua na tela de
+        // Planos e, ao voltar (fechar a aba ou clicar aqui de novo), o
+        // listener de foco já reconsulta o status sozinho.
+        window.open(invoiceUrl, '_blank', 'noopener,noreferrer');
       } else {
         showFeedback("O sistema criou a assinatura, mas não retornou o link.");
       }
