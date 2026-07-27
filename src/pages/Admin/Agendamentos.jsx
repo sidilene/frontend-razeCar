@@ -235,12 +235,18 @@ export default function Agendamentos() {
 
         if (item.dataHora) {
           const dataObj = new Date(item.dataHora);
-          const ano = dataObj.getFullYear();
-          const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
-          const dia = String(dataObj.getDate()).padStart(2, '0');
-          dataLocal = `${ano}-${mes}-${dia}`;
-          horaLocal = dataObj.getHours().toString().padStart(2, '0') + ':' +
-                      dataObj.getMinutes().toString().padStart(2, '0');
+          // Formata sempre no fuso do lava-jato (Brasília), não no fuso
+          // do dispositivo de quem está vendo a tela — assim o horário
+          // exibido é o mesmo pra qualquer admin, de qualquer lugar do mundo.
+          const partes = new Intl.DateTimeFormat('pt-BR', {
+            timeZone: 'America/Sao_Paulo',
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+          }).formatToParts(dataObj);
+          const obterParte = (tipo) => partes.find(p => p.type === tipo)?.value || '';
+
+          dataLocal = `${obterParte('year')}-${obterParte('month')}-${obterParte('day')}`;
+          horaLocal = `${obterParte('hour')}:${obterParte('minute')}`;
         }
 
         // 2. Proteção de Serviço
@@ -303,7 +309,14 @@ export default function Agendamentos() {
       const url = modalMode === 'create' ? `${API_BASE}/agendamentos` : `${API_BASE}/agendamentos/${idParaEditar}`;
       const method = modalMode === 'create' ? "POST" : "PUT";
 
+      // Usado só pra formatar a mensagem de sucesso pro admin (data local de exibição)
       const dataHoraCombinada = new Date(`${formData.data}T${formData.horario}:00`);
+
+      // 👇 O horário do agendamento é sempre no fuso do LAVA-JATO (Brasília,
+      // UTC-3), não no fuso do computador de quem está cadastrando. Fixamos
+      // o offset explicitamente pra não depender do fuso local do admin
+      // (ex: dono viajando com o notebook configurado em outro país).
+      const dataHoraISO = `${formData.data}T${formData.horario}:00-03:00`;
 
       const payload = {
         nome: formData.cliente,
@@ -312,7 +325,7 @@ export default function Agendamentos() {
         veiculo: formData.veiculo,
         tipoLavagem: formData.servico_id,
         funcionarioId: formData.funcionario_id || null, // <--- ENVIA O FUNCIONÁRIO
-        dataHora: dataHoraCombinada.toISOString(),
+        dataHora: dataHoraISO,
         price: formData.valor,
         status: formData.status,
         observacao: formData.observacao || ""

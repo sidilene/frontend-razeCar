@@ -158,12 +158,14 @@ export default function AgendamentosUsers() {
   const submitBooking = async () => {
     setSubmitting(true);
     try {
-      // Converte pra um Date real ANTES de enviar, usando o fuso horário
-      // do navegador de quem está agendando (mesmo padrão usado no app
-      // administrativo). Mandar a string crua sem timezone faz o servidor
-      // (que roda em UTC) interpretar o horário digitado como se já fosse
-      // UTC, deslocando a hora exibida depois.
-      const dataHoraCombinada = new Date(`${bookingData.date}T${bookingData.time}:00`);
+      // 👇 IMPORTANTE: o horário escolhido é sempre no fuso do LAVA-JATO
+      // (Brasília, UTC-3), não no fuso do aparelho de quem está agendando.
+      // Se usássemos `new Date(...)` puro, um cliente com o celular configurado
+      // em outro fuso horário (viagem, celular com data errada, etc.) faria
+      // o agendamento cair numa hora diferente da que ele realmente escolheu.
+      // Por isso fixamos o offset "-03:00" explicitamente na string ISO,
+      // em vez de depender do fuso do navegador.
+      const dataHoraISO = `${bookingData.date}T${bookingData.time}:00-03:00`;
 
       const payload = {
         lavajatoId: storeData._id,
@@ -172,7 +174,7 @@ export default function AgendamentosUsers() {
         placa: bookingData.vehiclePlate,
         veiculo: bookingData.vehicleModel,
         tipoLavagem: bookingData.serviceId,
-        dataHora: dataHoraCombinada.toISOString(),
+        dataHora: dataHoraISO,
         observacao: "Agendado via link público"
       };
 
